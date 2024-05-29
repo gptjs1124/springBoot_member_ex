@@ -25,7 +25,20 @@ public class MemberController {
     public String save(@ModelAttribute MemberDTO memberDTO){
         System.out.println("memberDTO = " + memberDTO);
         memberService.save(memberDTO);
-        return "index";
+        return "login";
+    }
+
+    @PostMapping("/member/login")
+    public String login(@ModelAttribute MemberDTO memberDTO) {
+        MemberDTO loginResult = memberService.login(memberDTO);
+        if(loginResult != null) {
+            //login 성공
+            //TODO ::  로그인 하기 17:33초 부터 보기 https://www.youtube.com/watch?v=W-XKXKLvV_8&list=PLV9zd3otBRt5ANIjawvd-el3QU594wyx7&index=9
+            return "main";
+        }else{
+            //login 실패
+            return "login";
+        }
     }
 
 }
