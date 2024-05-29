@@ -1,14 +1,33 @@
 package com.codingrecipe.member.controller;
-import com.codingrecipe.member.MemberApplication;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.codingrecipe.member.dto.MemberDTO;
+import com.codingrecipe.member.service.MemberService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
-@SpringBootApplication
+@Controller
+@RequiredArgsConstructor
 public class MemberController {
-    public static void main(String[] args){
-        SpringApplication.run(MemberApplication.class, args);
+    //@RequiredArgsConstructor 컨트롤러가 서비스 클래스의 자원 즉 메서드 필드를 사용할 권한이 생긴다.
+
+    // 생성자 주입
+    private final MemberService memberService;
+
+    //회원가입 페이지 출력 요청
+    @GetMapping("/member/save")
+    public String saveForm(){
+        return "save";
     }
+
+    @PostMapping("/member/save")
+    public String save(@ModelAttribute MemberDTO memberDTO){
+        System.out.println("memberDTO = " + memberDTO);
+        memberService.save(memberDTO);
+        return "index";
+    }
+
 }
 
 

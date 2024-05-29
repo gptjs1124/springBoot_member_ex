@@ -1,2 +1,27 @@
 server:
   port: 8081
+
+# database 연동 설정
+    # db_codingrecipe은 각자 PC에 만들어 놓은 Database명
+    # https://www.youtube.com/watch?v=D0censomYqA&list=PLV9zd3otBRt5ANIjawvd-el3QU594wyx7&index=7
+    # mysql 데이터베이스 만드는 것 부터 시작하기. -> 전에 raddit에서 어떡게 연결했는지 확인하기
+
+    # create database db_codingrecipe;
+    # create user user_codingrecipe@localhost identified by '1234';
+   # grant all privileges on db_codingrecipe.* to user_codingrecipe@localhost;
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/db_codingrecipe?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: user_codingrecipe
+    password: 1234
+  thymeleaf:
+    cache: false
+
+  # spring data jpa 설정
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: update
