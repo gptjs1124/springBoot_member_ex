@@ -3,9 +3,14 @@ import com.codingrecipe.member.dto.MemberDTO;
 import com.codingrecipe.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -28,17 +33,59 @@ public class MemberController {
         return "login";
     }
 
+    @GetMapping("member/login")
+    public String loginForm(){
+        return "login";
+    }
+
     @PostMapping("/member/login")
-    public String login(@ModelAttribute MemberDTO memberDTO) {
+    public String login(@ModelAttribute MemberDTO memberDTO, HttpSession session) {
         MemberDTO loginResult = memberService.login(memberDTO);
         if(loginResult != null) {
             //login 성공
-            //TODO ::  로그인 하기 17:33초 부터 보기 https://www.youtube.com/watch?v=W-XKXKLvV_8&list=PLV9zd3otBRt5ANIjawvd-el3QU594wyx7&index=9
+            session.setAttribute("loginEmail", loginResult.getMemberEmail());
             return "main";
         }else{
             //login 실패
             return "login";
         }
+    }
+
+    @GetMapping("/member/")
+    public String findAll(Model model){
+        List<MemberDTO> memberDTOList = memberService.findAll();
+        //어떠한 html로 가져갈 데이터가 있으면 model사용
+        model.addAttribute("memberList", memberDTOList);
+        return "list";
+    }
+
+    //@PathVariable는 {id}의 값을 가지고 온다.
+    @GetMapping("/member/{id}")
+    public String findById(@PathVariable Long id, Model model){
+        MemberDTO memberDTO = memberService.findById(id);
+        model.addAttribute("member",memberDTO);
+        return "detail";
+    }
+
+    @GetMapping("/member/update")
+    public String updateForm(HttpSession session, Model model){
+        String myEmaile = (String)session.getAttribute("loginEmail");
+        MemberDTO memberDTO = memberService.updateForm(myEmaile);
+        model.addAttribute("updateMember",memberDTO);
+        return "update";
+    }
+
+    @PostMapping("/member/update")
+    public String update(@ModelAttribute MemberDTO memberDTO, Model model){
+        memberService.update(memberDTO);
+        return "redirect:/member/" + memberDTO.getId();
+    }
+
+    @PostMapping("/member/delete/{id}")
+    public String delete(@PathVariable Long id, Model model){
+        int deleteCk = memberService.delete(id);
+        //model.addAttribute("member",memberDTO);
+        return "index";
     }
 
 }

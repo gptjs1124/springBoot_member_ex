@@ -6,6 +6,8 @@ import com.codingrecipe.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -44,5 +46,46 @@ public class MemberService {
             // 조회 결과가 없다 (해당 이메일을 가진 회원이 없다.)
             return null;
         }
+    }
+
+    public List<MemberDTO> findAll() {
+        List<MemberEntity> memberEntityList = memberRepository.findAll();
+        List<MemberDTO> memberDTOList = new ArrayList<>();
+
+        for(MemberEntity memberEntity: memberEntityList ){
+            memberDTOList.add(MemberDTO.toMemberDTO(memberEntity));
+        }
+
+        return memberDTOList;
+    }
+
+    public MemberDTO findById(Long id) {
+        Optional<MemberEntity> optionalMemberEntity = memberRepository.findById(id);
+        if(optionalMemberEntity.isPresent()) {//값이 있으면 true or 값이 없으면 false
+            return MemberDTO.toMemberDTO(optionalMemberEntity.get());
+        }else{
+            return null;
+        }
+    }
+
+    public MemberDTO updateForm(String myEmaile) {
+        Optional<MemberEntity> optionalMemberEntity = memberRepository.findByMemberEmail(myEmaile);
+        if(optionalMemberEntity.isPresent()){
+            return MemberDTO.toMemberDTO(optionalMemberEntity.get());
+        }else{
+            return null;
+        }
+    }
+
+    public void update(MemberDTO memberDTO) {
+        memberRepository.save(MemberEntity.toUpdateMemberEntity(memberDTO));
+        //id가 없으면 insert를 하고 id가 있으면 update를 해줌.
+    }
+
+
+    public int delete(Long id) {
+        //TODO :: 회원 삭제하기 부터 시작
+        //memberRepository.deleteById(id);
+        return 0;
     }
 }
